@@ -28,8 +28,8 @@ class CapitalPostRequest extends FormRequest
             "expensesItem" => "required|string",
             "date" => "required|string",
             "groupId" => "required|integer",
+            "userId" => "required|integer",
             "money" => "required|integer",
-            "name" => "required|string",
             "note" => "string|nullable",
             "share" => "boolean",
             "settlement" => "required|boolean",
@@ -47,10 +47,10 @@ class CapitalPostRequest extends FormRequest
             "date.string" => "日付は文字列で入力してください",
             "groupId.required" => "グループIDを入力してください",
             "groupId.integer" => "グループIDは整数で入力してください",
+            "userId.required" => "userIDを入力してください",
+            "userId.integer" => "userIDは整数で入力してください",
             "money.required" => "金額を入力してください",
             "money.integer" => "金額は整数で入力してください",
-            "name.required" => "名前を入力してください",
-            "name.string" => "名前は文字列で入力してください",
         ];
     }
 
