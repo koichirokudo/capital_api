@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Capital;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 class ReportController extends Controller
 {
     public function getYearlyReport(Request $request): JsonResponse
@@ -17,7 +17,7 @@ class ReportController extends Controller
 
         // 年ごとの収支を計算
         $years = DB::table('capitals')
-            ->select(DB::raw('TO_CHAR(date::DATE, \'YYYY\') as year'))
+            ->select(DB::raw("TO_CHAR(date::DATE, 'YYYY') as year"))
             ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
             ->where('users.id', $user->id)
             ->distinct()
@@ -29,12 +29,12 @@ class ReportController extends Controller
             $income = DB::table('capitals')
                 ->select([
                     DB::raw('SUM(money) as total'),
-                    DB::raw('TO_CHAR(date::DATE, \'Month\') as month')
+                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
                 ->whereYear('date', $year)
-                ->where('users.id', $user->id)
-                ->where('capital_type', '収入')
+                ->where('users.id', '=', $user->id)
+                ->where('capital_type', '=', '収入')
                 ->groupBy('month')
                 ->get();
 
@@ -42,12 +42,12 @@ class ReportController extends Controller
             $expenses = DB::table('capitals')
                 ->select([
                     DB::raw('SUM(money) as total'),
-                    DB::raw('TO_CHAR(date::DATE, \'Month\') as month')
+                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
                 ->whereYear('date', $year)
-                ->where('users.id', $user->id)
-                ->where('capital_type', '支出')
+                ->where('users.id', '=', $user->id)
+                ->where('capital_type', '=', '支出')
                 ->groupBy('month')
                 ->get();
 
@@ -72,9 +72,9 @@ class ReportController extends Controller
 
         $user = User::find($user_id);
 
-        // 月ごとの収入を計算する
+        // 月ごとの収支を計算
         $monthly = DB::table('capitals')
-            ->select(DB::raw('TO_CHAR(date::DATE, \'YYYY-MM\') as month'))
+            ->select(DB::raw("TO_CHAR(date::DATE, 'YYYY-MM') as month"))
             ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
             ->where('users.id', $user->id)
             ->distinct()
@@ -86,12 +86,12 @@ class ReportController extends Controller
             $income = DB::table('capitals')
                 ->select([
                     DB::raw('SUM(money) as total'),
-                    DB::raw('TO_CHAR(date::DATE, \'Month\') as month')
+                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
-                ->whereMonth('date', $month)
-                ->where('users.id', $user->id)
-                ->where('capital_type', '収入')
+                ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
+                ->where('users.id', '=', $user->id)
+                ->where('capital_type', '=', '収入')
                 ->groupBy('month')
                 ->get();
 
@@ -99,12 +99,12 @@ class ReportController extends Controller
             $expenses = DB::table('capitals')
                 ->select([
                     DB::raw('SUM(money) as total'),
-                    DB::raw('TO_CHAR(date::DATE, \'Month\') as month')
+                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
-                ->whereMonth('date', $month)
-                ->where('users.id', $user->id)
-                ->where('capital_type', '支出')
+                ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
+                ->where('users.id', '=', $user->id)
+                ->where('capital_type', '=', '支出')
                 ->groupBy('month')
                 ->get();
 
