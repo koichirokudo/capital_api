@@ -84,28 +84,28 @@ class ReportController extends Controller
         foreach ($monthly as $month) {
             // 収入を計算
             $income = DB::table('capitals')
-                ->select([
+                ->select(
+                    'expenses_item as category',
                     DB::raw('SUM(money) as total'),
-                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
-                ])
+                )
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', '収入')
-                ->groupBy('month')
+                ->groupBy('expenses_item')
                 ->get();
 
             // 支出を計算
             $expenses = DB::table('capitals')
-                ->select([
+                ->select(
+                    'expenses_item as category',
                     DB::raw('SUM(money) as total'),
-                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
-                ])
+                )
                 ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', '支出')
-                ->groupBy('month')
+                ->groupBy('expenses_item')
                 ->get();
 
             $result[] = [
@@ -114,9 +114,9 @@ class ReportController extends Controller
                 'userId' => $user->id,
                 'groupId' => $user->group_id,
                 'incomeTotal' => $income->sum('total'),
-                'incomeDetails' => $income->pluck('total', 'month')->all(),
+                'incomeDetails' => $income->pluck('total', 'category')->all(),
                 'expensesTotal' => $expenses->sum('total'),
-                'expensesDetails' => $expenses->pluck('total', 'month')->all(),
+                'expensesDetails' => $expenses->pluck('total', 'category')->all(),
             ];
         }
 
