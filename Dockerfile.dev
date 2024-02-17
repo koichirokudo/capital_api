@@ -13,6 +13,8 @@ apt-get install -y --no-install-recommends \
     libonig-dev
 rm -rf /var/lib/apt/lists/*
 docker-php-ext-install pdo_pgsql
+pecl install xdebug
+docker-php-ext-enable xdebug
 groupadd nginx
 adduser --system --disabled-login --disabled-password --no-create-home --ingroup nginx nginx
 usermod -aG nginx nginx
