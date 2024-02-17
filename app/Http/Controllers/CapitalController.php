@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CapitalPostRequest;
 use App\Models\Capital;
-use App\Models\ExpensesItems;
+use App\Models\FinancialTransaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,14 +16,14 @@ class CapitalController extends Controller
     public function index(Request $request): JsonResponse
     {
         // capital by user_id and group_id
-        if ($request->has('userId') && $request->has('groupId')) {
-            $capital = Capital::where('user_id', $request->userId)->where('group_id', $request->groupId)->get()->toArray();
+        if ($request->has('userId') && $request->has('userGroupId')) {
+            $capital = Capital::where('user_id', $request->userId)->where('user_group_id', $request->userGroupId)->get()->toArray();
         } else if ($request->has('userId')) {
             // capital by user_id
             $capital = Capital::where('user_id', $request->userId)->get()->toArray();
-        } else if ($request->has('groupId')) {
+        } else if ($request->has('userGroupId')) {
             // capital by group_id
-            $capital = Capital::where('group_id', $request->groupId)->get()->toArray();
+            $capital = Capital::where('user_group_id', $request->userGroupId)->get()->toArray();
         } else {
             // all capitals
             $capital = Capital::all()->toArray();
@@ -36,13 +36,12 @@ class CapitalController extends Controller
      */
     public function create(CapitalPostRequest $request): JsonResponse
     {
-        $expenses_item = ExpensesItems::select('label')->where('value', $request->expensesItem)->firstOrFail();
         Capital::create([
-            'capital_type' => $request->capitalType === 'income' ? '収入' : '支出',
-            'expenses_item' => $expenses_item->label,
+            'capital_type' => $request->capitalType === '0' ? 0 : 1,
+            'financial_transaction_id' => $request->financialTransactionId,
             'date' => $request->date,
             'user_id' => $request->userId,
-            'group_id' => $request->groupId,
+            'user_group_id' => $request->userGroupId,
             'money' => $request->money,
             'note' => $request->note,
             'share' => $request->share,
@@ -86,22 +85,23 @@ class CapitalController extends Controller
         $capital = Capital::findOrFail($id);
         $response = $capital->update([
             'capital_type' => $request->capitalType,
-            'expenses_item' => $request->expensesItem,
+            'financial_transaction_id' => $request->financialTransactionId,
             'date' => $request->date,
             'user_id' => $request->userId,
-            'group_id' => $request->groupId,
+            'group_id' => $request->userGroupId,
             'money' => $request->money,
             'note' => $request->note,
             'share' => $request->share,
             'settlement' => $request->settlement,
             'settlement_at' => $request->settlementAt,
         ]);
+
         if (!$response) {
             return response()->json(['message' => '更新に失敗しました'], 500, [], JSON_UNESCAPED_UNICODE);
-        } else {
-            $capital = Capital::findOrFail($id)->toArray();
-            return response()->json(['message' => '更新に成功しました', 'data' => array_keys_to_camel($capital)], 200, [], JSON_UNESCAPED_UNICODE);
         }
+
+        $capital = Capital::findOrFail($id)->toArray();
+        return response()->json(['message' => '更新に成功しました', 'data' => array_keys_to_camel($capital)], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /**

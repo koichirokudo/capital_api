@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ExpensesItemsController;
+use App\Http\Controllers\FinancialTransactionsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MeController;
 use App\Http\Controllers\LogoutController;
@@ -24,7 +24,7 @@ Route::post('/login', LoginController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/me', MeController::class);
     Route::post('/logout', LogoutController::class);
-    Route::get('/expenses-items', [ExpensesItemsController::class, 'index']);
+    Route::get('/financial-transactions', [FinancialTransactionsController::class, 'index']);
     Route::get('/capitals', [CapitalController::class, 'index']);
     Route::post('/capitals', [CapitalController::class, 'create']);
     Route::patch('/capitals/{id}', [CapitalController::class, 'update']);

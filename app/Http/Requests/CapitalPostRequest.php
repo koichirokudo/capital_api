@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -19,15 +20,15 @@ class CapitalPostRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
             "capitalType" => "required|string",
-            "expensesItem" => "required|string",
+            "financialTransactionId" => "required|integer",
             "date" => "required|string",
-            "groupId" => "required|integer",
+            "userGroupId" => "required|integer",
             "userId" => "required|integer",
             "money" => "required|integer",
             "note" => "string|nullable",
@@ -36,17 +37,17 @@ class CapitalPostRequest extends FormRequest
             "settlementAt" => "string|nullable",
         ];
     }
-    public function messages()
+    public function messages(): array
     {
         return [
             "capitalType.required" => "収支の種類を選択してください",
             "capitalType.string" => "収支の種類は文字列で入力してください",
-            "expensesItem.required" => "支出項目を選択してください",
-            "expensesItem.string" => "支出項目は文字列で入力してください",
+            "financialTransactionId.required" => "支出項目を選択してください",
+            "financialTransactionId.string" => "支出項目は文字列で入力してください",
             "date.required" => "日付を選択してください",
             "date.string" => "日付は文字列で入力してください",
-            "groupId.required" => "グループIDを入力してください",
-            "groupId.integer" => "グループIDは整数で入力してください",
+            "userGroupId.required" => "グループIDを入力してください",
+            "userGroupId.integer" => "グループIDは整数で入力してください",
             "userId.required" => "userIDを入力してください",
             "userId.integer" => "userIDは整数で入力してください",
             "money.required" => "金額を入力してください",

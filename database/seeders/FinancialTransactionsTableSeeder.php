@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\FinancialTransaction as FinancialTransactionModel;
 
-class ExpensesItemsTableSeeder extends Seeder
+class FinancialTransactionsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        \App\Models\ExpensesItems::insert([
+        FinancialTransactionModel::insert([
             [
                 'label' => '食費',
                 'type' => 0,

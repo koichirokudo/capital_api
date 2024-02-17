@@ -10,11 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('expenses_items', function (Blueprint $table) {
+        Schema::create('user_groups', function (Blueprint $table) {
             $table->id();
-            $table->integer('type');
-            $table->string('value');
-            $table->string('label');
+            $table->string('group_name')->nullable();
+            $table->string('invite_code')->nullable();
+            $table->string('invite_limit')->nullable();
+            $table->integer('start_day');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses_items');
+        Schema::dropIfExists('user_groups');
     }
 };

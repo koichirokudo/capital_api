@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Capital extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'id',
-        'capital_type',
-        'expenses_item',
-        'date',
-        'group_id',
         'user_id',
+        'user_group_id',
+        'capital_type',
+        'date',
+        'financial_transaction_id',
         'money',
-        'note',
         'share',
+        'note',
         'settlement',
         'settlement_at',
+        'created_at',
+        'updated_at',
     ];
 
 }

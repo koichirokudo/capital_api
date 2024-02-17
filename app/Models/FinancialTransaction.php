@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Groups extends Model
+class FinancialTransaction extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     protected $fillable = [
-        'group_name',
-        'invite_code',
-        'invite_limit',
-        'start_day',
+        'id',
+        'type',
+        'value',
+        'label',
     ];
 }

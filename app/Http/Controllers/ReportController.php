@@ -54,7 +54,7 @@ class ReportController extends Controller
             $result[] = [
                 'year' => $year,
                 'userId' => $user->id,
-                'groupId' => $user->group_id,
+                'userGroupId' => $user->userGroup_id,
                 'incomeTotal' => $income->sum('total'),
                 'incomeDetails' => $income->pluck('total', 'month')->all(),
                 'expensesTotal' => $expenses->sum('total'),
@@ -112,7 +112,7 @@ class ReportController extends Controller
                 'year' => $year,
                 'month' => $month,
                 'userId' => $user->id,
-                'groupId' => $user->group_id,
+                'userGroupId' => $user->user_group_id,
                 'incomeTotal' => $income->sum('total'),
                 'incomeDetails' => $income->pluck('total', 'category')->all(),
                 'expensesTotal' => $expenses->sum('total'),
