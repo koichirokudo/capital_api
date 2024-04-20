@@ -17,13 +17,23 @@ class CapitalController extends Controller
     {
         // capital by user_id and group_id
         if ($request->has('userId') && $request->has('userGroupId')) {
-            $capital = Capital::where('user_id', $request->userId)->where('user_group_id', $request->userGroupId)->get()->toArray();
+            $capital = Capital::where('user_id', $request->userId)
+                ->where('user_group_id', $request->userGroupId)
+                ->with('user')
+                ->get()
+                ->toArray();
         } else if ($request->has('userId')) {
             // capital by user_id
-            $capital = Capital::where('user_id', $request->userId)->get()->toArray();
+            $capital = Capital::where('user_id', $request->userId)
+                ->with('user')
+                ->get()
+                ->toArray();
         } else if ($request->has('userGroupId')) {
             // capital by group_id
-            $capital = Capital::where('user_group_id', $request->userGroupId)->get()->toArray();
+            $capital = Capital::where('user_group_id', $request->userGroupId)
+                ->with('user')
+                ->get()
+                ->toArray();
         } else {
             // all capitals
             $capital = Capital::all()->toArray();
