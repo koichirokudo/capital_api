@@ -25,7 +25,7 @@ class CapitalPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "capitalType" => "required|string",
+            "capitalType" => "required|integer",
             "financialTransactionId" => "required|integer",
             "date" => "required|string",
             "userGroupId" => "required|integer",
@@ -41,17 +41,17 @@ class CapitalPostRequest extends FormRequest
     {
         return [
             "capitalType.required" => "収支の種類を選択してください",
-            "capitalType.string" => "収支の種類は文字列で入力してください",
+            "capitalType.integer" => "収支の種類は数値で入力してください",
             "financialTransactionId.required" => "支出項目を選択してください",
-            "financialTransactionId.string" => "支出項目は文字列で入力してください",
+            "financialTransactionId.integer" => "支出項目は数値で入力してください",
             "date.required" => "日付を選択してください",
             "date.string" => "日付は文字列で入力してください",
             "userGroupId.required" => "グループIDを入力してください",
-            "userGroupId.integer" => "グループIDは整数で入力してください",
+            "userGroupId.integer" => "グループIDは数値で入力してください",
             "userId.required" => "userIDを入力してください",
-            "userId.integer" => "userIDは整数で入力してください",
+            "userId.integer" => "userIDは数値で入力してください",
             "money.required" => "金額を入力してください",
-            "money.integer" => "金額は整数で入力してください",
+            "money.integer" => "金額は数値で入力してください",
         ];
     }
 
