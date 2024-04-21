@@ -47,7 +47,8 @@ class CapitalController extends Controller
     public function create(CapitalPostRequest $request): JsonResponse
     {
         Capital::create([
-            'capital_type' => $request->capitalType === '0' ? 0 : 1,
+            'capital_type' => $request->capitalType === config('constants.EXPENSES')
+                ? config('constants.EXPENSES') : config('constants.INCOME'),
             'financial_transaction_id' => $request->financialTransactionId,
             'date' => $request->date,
             'user_id' => $request->userId,

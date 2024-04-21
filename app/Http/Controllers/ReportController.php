@@ -85,27 +85,33 @@ class ReportController extends Controller
             // 収入を計算
             $income = DB::table('capitals')
                 ->select(
-                    'expenses_item as category',
+                    'ft.id',
+                    'ft.label as category',
                     DB::raw('SUM(money) as total'),
                 )
                 ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
+                ->leftJoin('financial_transactions as ft', 'capitals.financial_transaction_id', '=', 'ft.id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.INCOME'))
-                ->groupBy('expenses_item')
+                ->groupBy('ft.id', 'ft.label')
+                ->orderBy('ft.id')
                 ->get();
 
             // 支出を計算
             $expenses = DB::table('capitals')
                 ->select(
-                    'expenses_item as category',
+                    'ft.id',
+                    'ft.label as category',
                     DB::raw('SUM(money) as total'),
                 )
                 ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
+                ->leftJoin('financial_transactions as ft', 'capitals.financial_transaction_id', '=', 'ft.id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.EXPENSES'))
-                ->groupBy('expenses_item')
+                ->groupBy('ft.id', 'ft.label')
+                ->orderBy('ft.id')
                 ->get();
 
             $result[] = [
