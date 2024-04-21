@@ -18,7 +18,7 @@ class ReportController extends Controller
         // 年ごとの収支を計算
         $years = DB::table('capitals')
             ->select(DB::raw("TO_CHAR(date::DATE, 'YYYY') as year"))
-            ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+            ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
             ->where('users.id', $user->id)
             ->distinct()
             ->pluck('year');
@@ -31,10 +31,10 @@ class ReportController extends Controller
                     DB::raw('SUM(money) as total'),
                     DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
-                ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+                ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
-                ->where('capital_type', '=', '収入')
+                ->where('capital_type', '=', config('constants.INCOME'))
                 ->groupBy('month')
                 ->get();
 
@@ -44,10 +44,10 @@ class ReportController extends Controller
                     DB::raw('SUM(money) as total'),
                     DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
-                ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+                ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
-                ->where('capital_type', '=', '支出')
+                ->where('capital_type', '=', config('constants.EXPENSES'))
                 ->groupBy('month')
                 ->get();
 
@@ -75,7 +75,7 @@ class ReportController extends Controller
         // 月ごとの収支を計算
         $monthly = DB::table('capitals')
             ->select(DB::raw("TO_CHAR(date::DATE, 'YYYY-MM') as month"))
-            ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+            ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
             ->where('users.id', $user->id)
             ->distinct()
             ->pluck('month');
@@ -88,10 +88,10 @@ class ReportController extends Controller
                     'expenses_item as category',
                     DB::raw('SUM(money) as total'),
                 )
-                ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+                ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
-                ->where('capital_type', '=', '収入')
+                ->where('capital_type', '=', config('constants.INCOME'))
                 ->groupBy('expenses_item')
                 ->get();
 
@@ -101,10 +101,10 @@ class ReportController extends Controller
                     'expenses_item as category',
                     DB::raw('SUM(money) as total'),
                 )
-                ->leftJoin('users', 'capitals.group_id', '=', 'users.group_id')
+                ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
-                ->where('capital_type', '=', '支出')
+                ->where('capital_type', '=', config('constants.EXPENSES'))
                 ->groupBy('expenses_item')
                 ->get();
 
