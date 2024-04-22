@@ -23,42 +23,69 @@ class ReportController extends Controller
             ->distinct()
             ->pluck('year');
 
-        $result = [];
+        $default_data = [
+            '1' => 0,
+            '2' => 0,
+            '3' => 0,
+            '4' => 0,
+            '5' => 0,
+            '6' => 0,
+            '7' => 0,
+            '8' => 0,
+            '9' => 0,
+            '10' => 0,
+            '11' => 0,
+            '12' => 0,
+        ];
+
         foreach ($years as $year) {
+            $income_default_data = $default_data;
+
             // 収入を計算
             $income = DB::table('capitals')
                 ->select([
+                    DB::raw("TO_CHAR(date::DATE, 'FMMM') as month"),
                     DB::raw('SUM(money) as total'),
-                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.INCOME'))
                 ->groupBy('month')
-                ->get();
+                ->orderBy('month')
+                ->get()
+                ->pluck('total', 'month')
+                ->all();
+            $income_total = array_sum($income);
+            $income_details = array_replace($income_default_data, $income);
 
             // 支出を計算
+            $expenses_default_data = $default_data;
             $expenses = DB::table('capitals')
                 ->select([
+                    DB::raw("TO_CHAR(date::DATE, 'FMMM') as month"),
                     DB::raw('SUM(money) as total'),
-                    DB::raw("TO_CHAR(date::DATE, 'Month') as month")
                 ])
                 ->leftJoin('users', 'capitals.user_group_id', '=', 'users.user_group_id')
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.EXPENSES'))
                 ->groupBy('month')
-                ->get();
+                ->orderBy('month')
+                ->get()
+                ->pluck('total', 'month')
+                ->all();
+            $expenses_total = array_sum($expenses);
+            $expenses_details = array_replace($expenses_default_data, $expenses);
 
             $result[] = [
                 'year' => $year,
                 'userId' => $user->id,
                 'userGroupId' => $user->userGroup_id,
-                'incomeTotal' => $income->sum('total'),
-                'incomeDetails' => $income->pluck('total', 'month')->all(),
-                'expensesTotal' => $expenses->sum('total'),
-                'expensesDetails' => $expenses->pluck('total', 'month')->all(),
+                'incomeTotal' => $income_total,
+                'incomeDetails' => $income_details,
+                'expensesTotal' => $expenses_total,
+                'expensesDetails' => $expenses_details,
             ];
         }
 
