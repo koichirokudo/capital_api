@@ -32,7 +32,7 @@ class CapitalPostRequest extends FormRequest
             "userId" => "required|integer",
             "money" => "required|integer",
             "note" => "string|nullable",
-            "share" => "boolean",
+            "share" => "string",
             "settlement" => "required|boolean",
             "settlementAt" => "string|nullable",
         ];
@@ -44,6 +44,7 @@ class CapitalPostRequest extends FormRequest
             "capitalType.integer" => "収支の種類は数値で入力してください",
             "financialTransactionId.required" => "支出項目を選択してください",
             "financialTransactionId.integer" => "支出項目は数値で入力してください",
+            "share.string" => "共有は文字列で入力してください",
             "date.required" => "日付を選択してください",
             "date.string" => "日付は文字列で入力してください",
             "userGroupId.required" => "グループIDを入力してください",
