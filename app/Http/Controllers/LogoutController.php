@@ -16,6 +16,7 @@ class LogoutController extends Controller
         // クライアント側のセッションをクリア
         Cookie::queue(Cookie::forget('capital_session'));
         Cookie::queue(Cookie::forget('XSRF-TOKEN'));
+        Cookie::queue(Cookie::forget('user_group_id'));
 
         return response()->json(['message' => 'ログアウトしました']);
     }
