@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CapitalPostRequest;
 use App\Models\Capital;
-use App\Models\FinancialTransaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class CapitalController extends Controller
 {
@@ -15,30 +16,21 @@ class CapitalController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $userGroupId = Cookie::get('user_group_id');
+        $userId = Auth::id();
+
         // capital by user_id and group_id
-        if ($request->has('userId') && $request->has('userGroupId')) {
-            $capital = Capital::where('user_id', $request->userId)
-                ->where('user_group_id', $request->userGroupId)
-                ->with('user')
-                ->get()
-                ->toArray();
-        } else if ($request->has('userId')) {
-            // capital by user_id
-            $capital = Capital::where('user_id', $request->userId)
-                ->with('user')
-                ->get()
-                ->toArray();
-        } else if ($request->has('userGroupId')) {
-            // capital by group_id
-            $capital = Capital::where('user_group_id', $request->userGroupId)
-                ->with('user')
-                ->get()
-                ->toArray();
-        } else {
-            // all capitals
-            $capital = Capital::all()->toArray();
-        }
-        return response()->json(['data' => array_keys_to_camel($capital)]);
+        $capitals = Capital::where(function ($query) use ($userId, $userGroupId) {
+            $query->where('user_id', $userId)  // ログインユーザー自身のレコードを取得
+            ->orWhere(function ($query) use ($userGroupId) {  // または
+                $query->where('user_group_id', $userGroupId)  // ログインユーザーが所属するグループの
+                ->where('share', true);  // 共有レコードを取得
+            });
+        })->with(['user' => function ($query) {
+            $query->select('id', 'name');
+            $query->where('delete', false);
+        }])->get()->toArray();
+        return response()->json(['data' => array_keys_to_camel($capitals)]);
     }
 
     /**

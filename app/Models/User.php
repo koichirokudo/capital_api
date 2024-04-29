@@ -35,7 +35,9 @@ class User extends Authenticate
      * @var array<int, string>
      */
     protected $hidden = [
+        'auth_type',
         'password',
+        'email_verified_at',
     ];
 
 }
