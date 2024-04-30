@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FinancialTransactionRatioController;
 use App\Http\Controllers\FinancialTransactionsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MeController;
@@ -25,6 +26,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/me', MeController::class);
     Route::post('/logout', LogoutController::class);
     Route::get('/financial-transactions', [FinancialTransactionsController::class, 'index']);
+    Route::post('/financial-transaction-ratio', [FinancialTransactionRatioController::class, 'index']);
+    Route::post('/financial-transaction-ratio/{id}', [FinancialTransactionRatioController::class, 'update']);
     Route::get('/capitals', [CapitalController::class, 'index']);
     Route::post('/capitals', [CapitalController::class, 'create']);
     Route::patch('/capitals/{id}', [CapitalController::class, 'update']);
