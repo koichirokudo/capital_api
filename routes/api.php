@@ -7,6 +7,7 @@ use App\Http\Controllers\MeController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\CapitalController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/login', LoginController::class);
+Route::post('/users', [UsersController::class, 'create']);
+Route::post('/users/verify', [UsersController::class, 'verify']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/me', MeController::class);

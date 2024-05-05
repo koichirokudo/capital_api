@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\UserGroup as UserGroupModel;
 use App\Models\User as UserModel;
 use App\Models\Capital as CapitalModel;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'kudou_kouichirou',
             'password' => bcrypt('password'),
             'email' => 'kudou_kouichirou@example.com',
+            'token' => Str::random(60),
         ]);
         UserModel::factory(3)->create();
         CapitalModel::factory(500)->create();

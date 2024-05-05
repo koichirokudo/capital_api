@@ -24,6 +24,7 @@ class User extends Authenticate
         'password',
         'email',
         'email_verified_at',
+        'token',
         'delete',
         'created_at',
         'updated_at',
@@ -38,6 +39,7 @@ class User extends Authenticate
         'auth_type',
         'password',
         'email_verified_at',
+        'token'
     ];
 
 }

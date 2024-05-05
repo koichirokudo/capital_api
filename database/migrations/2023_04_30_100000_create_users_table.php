@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('profile_image')->nullable();
             $table->string('name');
             $table->string('password');
+            $table->string('token');
             $table->string('email')->unique()->nullable();
             $table->string('email_verified_at')->nullable();
             $table->boolean('delete')->default(false);
