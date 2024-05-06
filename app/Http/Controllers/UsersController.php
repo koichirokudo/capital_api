@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -18,7 +19,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $userId = Auth::id();
+        $user = User::where('id', $userId)->first();
+        return response()->json(['data' => array_keys_to_camel($user)]);
     }
 
     /**

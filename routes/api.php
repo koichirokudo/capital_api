@@ -25,8 +25,9 @@ Route::post('/login', LoginController::class);
 Route::post('/users', [UsersController::class, 'create']);
 Route::post('/users/verify', [UsersController::class, 'verify']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(static function () {
     Route::get('/me', MeController::class);
+    Route::get('/user', [UsersController::class, 'index']);
     Route::post('/logout', LogoutController::class);
     Route::get('/financial-transactions', [FinancialTransactionsController::class, 'index']);
     Route::post('/financial-transaction-ratio', [FinancialTransactionRatioController::class, 'index']);
