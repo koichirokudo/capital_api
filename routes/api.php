@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(static function () {
     Route::post('/financial-transaction-ratio/{id}', [FinancialTransactionRatioController::class, 'update']);
     Route::get('/capitals', [CapitalController::class, 'index']);
     Route::post('/capitals', [CapitalController::class, 'create']);
+    Route::get('/capitals/calculate', [CapitalController::class, 'calculate']);
     Route::patch('/capitals/{id}', [CapitalController::class, 'update']);
     Route::delete('/capitals/{id}', [CapitalController::class, 'destroy']);
     Route::get('/year', [ReportController::class, 'getYearlyReport']);

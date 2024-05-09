@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
     public function getYearlyReport(Request $request): JsonResponse
     {
-        $user_id = $request->input('user_id');
-
-        $user = User::find($user_id);
+        $user = Auth::user();
 
         // 年ごとの収支を計算
         $years = DB::table('capitals')
@@ -94,10 +93,7 @@ class ReportController extends Controller
 
     public function getMonthlyReport(Request $request): JsonResponse
     {
-        $year = $request->input('year');
-        $user_id = $request->input('user_id');
-
-        $user = User::find($user_id);
+        $user = Auth::user();
 
         // 月ごとの収支を計算
         $monthly = DB::table('capitals')
@@ -142,7 +138,6 @@ class ReportController extends Controller
                 ->get();
 
             $result[] = [
-                'year' => $year,
                 'month' => $month,
                 'userId' => $user->id,
                 'userGroupId' => $user->user_group_id,
