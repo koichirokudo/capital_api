@@ -50,6 +50,7 @@ class ReportController extends Controller
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.INCOME'))
+                ->where('share', true)
                 ->groupBy('month')
                 ->orderBy('month')
                 ->get()
@@ -69,6 +70,7 @@ class ReportController extends Controller
                 ->whereYear('date', $year)
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.EXPENSES'))
+                ->where('share', true)
                 ->groupBy('month')
                 ->orderBy('month')
                 ->get()
@@ -117,6 +119,7 @@ class ReportController extends Controller
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.INCOME'))
+                ->where('share', true)
                 ->groupBy('ft.id', 'ft.label')
                 ->orderBy('ft.id')
                 ->get();
@@ -133,6 +136,7 @@ class ReportController extends Controller
                 ->whereRaw("date_trunc('month', date) = TO_DATE(?, 'YYYY-MM')", [$month])
                 ->where('users.id', '=', $user->id)
                 ->where('capital_type', '=', config('constants.EXPENSES'))
+                ->where('share', true)
                 ->groupBy('ft.id', 'ft.label')
                 ->orderBy('ft.id')
                 ->get();
