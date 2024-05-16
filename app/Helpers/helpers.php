@@ -7,7 +7,7 @@ if (! function_exists('array_keys_to_camel')) {
      * @param  array  $array
      * @return array
      */
-    function array_keys_to_camel(array $array)
+    function array_keys_to_camel(array $array): array
     {
         $convertedArray = [];
         foreach ($array as $key => $value) {
