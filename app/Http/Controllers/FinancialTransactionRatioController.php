@@ -13,8 +13,8 @@ class FinancialTransactionRatioController
     public function index(): JsonResponse
     {
         $user_group_id = Cookie::get('user_group_id');
-        $financial_transactions = FinancialTransaction::where('user_group_id', $user_group_id)->get()->toArray();
-        return response()->json(['data' => array_keys_to_camel($financial_transactions)]);
+        $financial_transaction_ratios = FinancialTransactionRatio::select('financial_transaction_id', 'ratio')->where('user_group_id', $user_group_id)->get()->toArray();
+        return response()->json(['data' => array_keys_to_camel($financial_transaction_ratios)], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function update(FinancialTransactionRatioRequest $request, $id)
