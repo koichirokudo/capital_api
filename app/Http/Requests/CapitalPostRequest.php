@@ -27,14 +27,13 @@ class CapitalPostRequest extends FormRequest
         return [
             "capitalType" => "required|integer",
             "financialTransactionId" => "required|integer",
+            "settlement_id" => "integer|nullable",
             "date" => "required|string",
             "userGroupId" => "required|integer",
             "userId" => "required|integer",
             "money" => "required|integer",
             "note" => "string|nullable",
             "share" => "boolean",
-            "settlement" => "required|boolean",
-            "settlementAt" => "string|nullable",
         ];
     }
     public function messages(): array

@@ -42,14 +42,13 @@ class CapitalController extends Controller
             'capital_type' => $request->capitalType === config('constants.EXPENSES')
                 ? config('constants.EXPENSES') : config('constants.INCOME'),
             'financial_transaction_id' => $request->financialTransactionId,
+            'settlement_id' => null,
             'date' => $request->date,
             'user_id' => $request->userId,
             'user_group_id' => $request->userGroupId,
             'money' => $request->money,
             'note' => $request->note,
             'share' => $request->share,
-            'settlement' => $request->settlement,
-            'settlement_at' => $request->settlementAt,
         ]);
 
         return response()->json(['message' => '登録に成功しました'], 201, [], JSON_UNESCAPED_UNICODE);
@@ -86,7 +85,6 @@ class CapitalController extends Controller
             ->whereMonth('date', (int)$month)
             ->where('capitals.user_group_id', (int)$userGroupId)
             ->where('share', true)
-            ->where('settlement', false)
             ->groupBy('financial_transactions.id', 'financial_transactions.label', 'users.name')
             ->havingRaw('SUM(MONEY) <> 0')
             ->orderBy('financial_transactions.id')
