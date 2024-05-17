@@ -24,12 +24,8 @@ class LoginController extends Controller
             ], 401);
         }
 
-        $user = Auth::user();
-        $userGroupId = $user->user_group_id;
-
-        $minutes = 60;
         return response()->json([
             'message' => 'ログインに成功しました。'
-        ])->withCookie(cookie('user_group_id', $userGroupId, $minutes));
+        ]);
     }
 }

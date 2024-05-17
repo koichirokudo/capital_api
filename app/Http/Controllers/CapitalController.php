@@ -7,7 +7,7 @@ use App\Models\Capital;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 
 class CapitalController extends Controller
 {
@@ -16,7 +16,7 @@ class CapitalController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $userGroupId = Cookie::get('user_group_id');
+        $userGroupId = Auth::user()->user_group_id;
         $userId = Auth::id();
 
         // capital by user_id and group_id
@@ -53,6 +53,86 @@ class CapitalController extends Controller
         ]);
 
         return response()->json(['message' => '登録に成功しました'], 201, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * @param Request $request
+     * @param $year
+     * @param $month
+     * @return JsonResponse
+     *
+     * @example Response
+     * {
+     *     "label": "食費",
+     *     "paid": {
+     *       "test_user1": 6000,
+     *       "test_user2": 5000,
+     *       "perPerson": 5500,
+     *       "total": 11000,
+     *      },
+     *     "paymentPlan": {
+     *       "test_user1": 0,
+     *       "test_user2": 500,
+     *     }
+     * }
+     */
+    public function calculate(Request $request, $year, $month): JsonResponse
+    {
+        $userGroupId = Auth::user()->user_group_id;
+        $capitals = Capital::select('financial_transactions.id', 'financial_transactions.label', 'users.name', DB::raw('SUM(MONEY) as money'))
+            ->leftJoin('financial_transactions', 'financial_transactions.id', '=', 'capitals.financial_transaction_id')
+            ->leftJoin('users', 'users.id', '=', 'capitals.user_id')
+            ->whereYear('date', (int)$year)
+            ->whereMonth('date', (int)$month)
+            ->where('capitals.user_group_id', (int)$userGroupId)
+            ->where('share', true)
+            ->where('settlement', false)
+            ->groupBy('financial_transactions.id', 'financial_transactions.label', 'users.name')
+            ->havingRaw('SUM(MONEY) <> 0')
+            ->orderBy('financial_transactions.id')
+            ->get();
+
+        $payment_by_category = [];
+        $users = [];
+        foreach ($capitals as $capital) {
+            $payment_by_category[$capital->id]['label'] = $capital->label;
+            $payment_by_category[$capital->id]['paid'][$capital->name] = $capital->money;
+            $users[$capital->name] = $capital->name;
+        }
+
+        // 各カテゴリの支払い合計を計算
+        $payment_plan_total = [];
+        foreach ($payment_by_category as $category_id => $payments) {
+            $payment_by_category[$category_id]['paid']['total'] = array_sum($payments['paid']);
+            // TODO:FinancialTransactionRatioモデルを使って支払い比率を取得
+            $payment_by_category[$category_id]['paid']['perPerson'] = (int)floor($payment_by_category[$category_id]['paid']['total'] * config('constants.RATIO'));
+            foreach ($users as $user) {
+                if (!isset($payment_by_category[$category_id]['paid'][$user])) {
+                    $payment_by_category[$category_id]['paid'][$user] = 0;
+                    $payment_by_category[$category_id]['paymentPlan'][$user] = 0;
+                }
+                $money = $payment_by_category[$category_id]['paid']['perPerson'] - $payment_by_category[$category_id]['paid'][$user];
+                if ($money > 0) {
+                    $payment_by_category[$category_id]['paymentPlan'][$user] = $money;
+                } else {
+                    $payment_by_category[$category_id]['paymentPlan'][$user] = 0;
+                }
+
+                if (!isset($payment_plan_total[$user])) {
+                    $payment_plan_total[$user] = 0;
+                }
+                $payment_plan_total[$user] += $payment_by_category[$category_id]['paymentPlan'][$user];
+            }
+        }
+
+        return response()->json([
+            'data' => [
+                'paymentByCategory' => $payment_by_category,
+                'paymentPlanTotal' => $payment_plan_total,
+                'users' => $users,
+            ]
+        ]);
+
     }
 
     /**
