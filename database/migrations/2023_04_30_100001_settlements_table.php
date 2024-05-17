@@ -10,17 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('settlements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_group_id')->constrained()->onDelete('cascade')->references('id')->on('user_groups');
-            $table->integer('auth_type');
-            $table->string('profile_image')->nullable();
-            $table->string('name');
-            $table->string('password');
-            $table->string('token');
-            $table->string('email')->unique()->nullable();
-            $table->string('email_verified_at')->nullable();
-            $table->boolean('delete')->default(false);
+            $table->integer('year');
+            $table->integer('month');
+            $table->boolean('settled')->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('settlements');
     }
 };

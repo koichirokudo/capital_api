@@ -12,15 +12,14 @@ return new class extends Migration {
     {
         Schema::create('capitals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_group_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->references('id')->on('users');
+            $table->foreignId('user_group_id')->constrained()->onDelete('cascade')->references('id')->on('user_groups');
+            $table->foreignId('settlement_id')->nullable()->constrained()->onDelete('cascade')->references('id')->on('settlements');
             $table->integer('capital_type');
             $table->date('date');
-            $table->foreignId('financial_transaction_id')->constrained()->onDelete('cascade');
+            $table->foreignId('financial_transaction_id')->constrained()->onDelete('cascade')->references('id')->on('financial_transactions');
             $table->integer('money')->default(0);
             $table->boolean('share')->default(false);
-            $table->boolean('settlement')->default(false);
-            $table->string('settlement_at')->nullable();
             $table->string('note')->nullable();
             $table->timestamps();
         });
