@@ -7,6 +7,7 @@ use App\Http\Controllers\MeController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\CapitalController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettlementController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserGroupsController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,8 @@ Route::middleware(['auth:sanctum'])->group(static function () {
     Route::get('/capitals/calculate/{year}/{month}', [CapitalController::class, 'calculate']);
     Route::patch('/capitals/{id}', [CapitalController::class, 'update']);
     Route::delete('/capitals/{id}', [CapitalController::class, 'destroy']);
+    Route::post('/decision', [CapitalController::class, 'decision']);
+    Route::get('/settlement/{year}/{month}', [SettlementController::class, 'index']);
     Route::get('/year', [ReportController::class, 'getYearlyReport']);
     Route::get('/month', [ReportController::class, 'getMonthlyReport']);
 });

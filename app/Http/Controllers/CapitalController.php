@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CapitalPostRequest;
 use App\Models\Capital;
+use App\Models\Settlement;
+use App\Models\SettlementDetail;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,13 +92,12 @@ class CapitalController extends Controller
             ->havingRaw('SUM(MONEY) <> 0')
             ->orderBy('financial_transactions.id')
             ->get();
+        $users = User::select('id', 'name')->where('user_group_id', $userGroupId)->where('delete', false)->get()->toArray();
 
         $payment_by_category = [];
-        $users = [];
         foreach ($capitals as $capital) {
             $payment_by_category[$capital->id]['label'] = $capital->label;
             $payment_by_category[$capital->id]['paid'][$capital->name] = $capital->money;
-            $users[$capital->name] = $capital->name;
         }
 
         // 各カテゴリの支払い合計を計算
@@ -105,21 +107,21 @@ class CapitalController extends Controller
             // TODO:FinancialTransactionRatioモデルを使って支払い比率を取得
             $payment_by_category[$category_id]['paid']['perPerson'] = (int)floor($payment_by_category[$category_id]['paid']['total'] * config('constants.RATIO'));
             foreach ($users as $user) {
-                if (!isset($payment_by_category[$category_id]['paid'][$user])) {
-                    $payment_by_category[$category_id]['paid'][$user] = 0;
-                    $payment_by_category[$category_id]['paymentPlan'][$user] = 0;
+                if (!isset($payment_by_category[$category_id]['paid'][$user['name']])) {
+                    $payment_by_category[$category_id]['paid'][$user['name']] = 0;
+                    $payment_by_category[$category_id]['paymentPlan'][$user['name']] = 0;
                 }
-                $money = $payment_by_category[$category_id]['paid']['perPerson'] - $payment_by_category[$category_id]['paid'][$user];
+                $money = $payment_by_category[$category_id]['paid']['perPerson'] - $payment_by_category[$category_id]['paid'][$user['name']];
                 if ($money > 0) {
-                    $payment_by_category[$category_id]['paymentPlan'][$user] = $money;
+                    $payment_by_category[$category_id]['paymentPlan'][$user['name']] = $money;
                 } else {
-                    $payment_by_category[$category_id]['paymentPlan'][$user] = 0;
+                    $payment_by_category[$category_id]['paymentPlan'][$user['name']] = 0;
                 }
 
-                if (!isset($payment_plan_total[$user])) {
-                    $payment_plan_total[$user] = 0;
+                if (!isset($payment_plan_total[$user['name']])) {
+                    $payment_plan_total[$user['name']] = 0;
                 }
-                $payment_plan_total[$user] += $payment_by_category[$category_id]['paymentPlan'][$user];
+                $payment_plan_total[$user['name']] += $payment_by_category[$category_id]['paymentPlan'][$user['name']];
             }
         }
 
@@ -131,6 +133,27 @@ class CapitalController extends Controller
             ]
         ]);
 
+    }
+
+    public function decision(Request $request)
+    {
+        $user_group_id = Auth::user()->user_group_id;
+
+        $settlement = Settlement::create([
+            'user_group_id' => $user_group_id,
+            'year' => $request->year,
+            'month' => $request->month,
+            'settled' => true,
+        ]);
+
+        SettlementDetail::create([
+            'settlement_id' => $settlement->id,
+            'payer_id' => $request->payerId,
+            'payee_id' => $request->payeeId,
+            'amount' => $request->amount,
+        ]);
+
+        return response()->json(['message' => '登録に成功しました'], 201, [], JSON_UNESCAPED_UNICODE);
     }
 
     /**

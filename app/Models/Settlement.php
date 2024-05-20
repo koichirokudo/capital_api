@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class settlement_detail extends Model
+class Settlement extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'settlement_id',
-        'payer_id',
-        'payee_id',
-        'amount',
+        'user_group_id',
+        'year',
+        'month',
+        'settled',
         'created_at',
         'updated_at',
     ];
