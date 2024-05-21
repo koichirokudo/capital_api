@@ -17,7 +17,7 @@ class CapitalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, $year, $month): JsonResponse
     {
         $userGroupId = Auth::user()->user_group_id;
         $userId = Auth::id();
@@ -27,12 +27,14 @@ class CapitalController extends Controller
             $query->where('user_id', $userId)  // ログインユーザー自身のレコードを取得
             ->orWhere(function ($query) use ($userGroupId) {  // または
                 $query->where('user_group_id', $userGroupId)  // ログインユーザーが所属するグループの
-                ->where('share', true);  // 共有レコードを取得
+                ->where('share', true); // 共有レコードを取得
             });
-        })->with(['user' => function ($query) {
-            $query->select('id', 'name');
-            $query->where('delete', false);
-        }])->get()->toArray();
+        })->whereYear('date', (int)$year)
+            ->whereMonth('date', (int)$month)
+            ->with(['user' => function ($query) {
+                $query->select('id', 'name');
+                $query->where('delete', false);
+            }])->get()->toArray();
         return response()->json(['data' => array_keys_to_camel($capitals)]);
     }
 

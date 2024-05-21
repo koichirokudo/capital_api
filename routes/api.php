@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum'])->group(static function () {
     Route::get('/financial-transactions', [FinancialTransactionsController::class, 'index']);
     Route::get('/financial-transaction-ratio', [FinancialTransactionRatioController::class, 'index']);
     Route::post('/financial-transaction-ratio/{id}', [FinancialTransactionRatioController::class, 'update']);
-    Route::get('/capitals', [CapitalController::class, 'index']);
+    Route::get('/capitals/{year}/{month}', [CapitalController::class, 'index']);
     Route::post('/capitals', [CapitalController::class, 'create']);
     Route::get('/capitals/calculate/{year}/{month}', [CapitalController::class, 'calculate']);
     Route::patch('/capitals/{id}', [CapitalController::class, 'update']);
