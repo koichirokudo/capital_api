@@ -203,7 +203,7 @@ class CapitalController extends Controller
         ]);
 
         if (!$response) {
-            return response()->json(['message' => '更新に失敗しました'], 500, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['message' => '更新に失敗しました'], 400, [], JSON_UNESCAPED_UNICODE);
         }
 
         $capital = Capital::findOrFail($id)->toArray();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,7 +89,7 @@ class ReportController extends Controller
             ];
         }
 
-        return response()->json(['data' => $result]);
+        return response()->json(['data' => $result ?? []]);
     }
 
     public function getMonthlyReport(Request $request): JsonResponse
@@ -152,6 +151,6 @@ class ReportController extends Controller
             ];
         }
 
-        return response()->json(['data' => $result]);
+        return response()->json(['data' => $result ?? []]);
     }
 }

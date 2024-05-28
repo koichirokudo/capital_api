@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserPostRequest extends FormRequest
+class UserEditRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,21 +24,17 @@ class UserPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'name' => 'required|string',
-            'password' => 'required|string',
-            'inviteCode' => 'string|nullable',
+            'email' => 'email',
+            'name' => 'string',
+            'password' => 'string',
         ];
     }
 
     public function messages(): array
     {
         return [
-            "email.required" => "メールアドレスを入力してください",
             "email.string" => "メールアドレスは文字列で入力してください",
-            "name.required" => "名前を入力してください",
             "name.string" => "名前は文字列で入力してください",
-            "password.required" => "パスワードを入力してください",
             "password.string" => "パスワードは文字列で入力してください",
         ];
     }

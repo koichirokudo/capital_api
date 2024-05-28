@@ -29,7 +29,8 @@ Route::post('/users/verify', [UsersController::class, 'verify']);
 
 Route::middleware(['auth:sanctum'])->group(static function () {
     Route::get('/me', MeController::class);
-    Route::get('/user', [UsersController::class, 'index']);
+    Route::get('/users', [UsersController::class, 'index']);
+    Route::patch('/users/update', [UsersController::class, 'update']);
     Route::get('/user/group', [UserGroupsController::class, 'group']);
     Route::post('/logout', LogoutController::class);
     Route::get('/financial-transactions', [FinancialTransactionsController::class, 'index']);
