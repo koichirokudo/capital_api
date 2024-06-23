@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('/health', function () {
+    return response('OK', 200);
+});
 Route::post('/login', LoginController::class);
 Route::post('/users', [UsersController::class, 'create']);
 Route::post('/users/verify', [UsersController::class, 'verify']);
